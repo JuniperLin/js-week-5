@@ -30,9 +30,25 @@ let data = [
     "rate": 7.5
     }
 ];
-
+// 套票區
 const list = document.querySelector(".ticketCard-area");
+// 查詢地點
+const regionSearch = document.querySelector(".regionSearch");
+const searchResultText = document.querySelector("#searchResult-text");
+// 套票資訊
+const tickedName = document.querySelector("#ticketName");
+const ticketImgUrl = document.querySelector("#ticketImgUrl");
+const ticketRegion = document.querySelector("#ticketRegion");
+const ticketPrice = document.querySelector("#ticketPrice");
+const ticketNum = document.querySelector("#ticketNum");
+const ticketRate = document.querySelector("#ticketRate");
+const ticketDescription = document.querySelector("#ticketDescription");
+// 推送按鈕
+const addTicketBtn = document.querySelector(".addTicket-btn");
+// 選取整個 form
+const form = document.querySelector(".addTicket-form");
 
+// 初始化畫面（顯示全部套票）
 function init(){
     let str = "";
     data.forEach(function(item){
@@ -65,12 +81,11 @@ function init(){
         </div>
     </li>`
     });
-    list.innerHTML = str;
+    list.innerHTML = str; // 顯示在畫面上
 }
-init();
+init(); // 跑第一次
 
-const regionSearch = document.querySelector(".regionSearch");
-const searchResultText = document.querySelector("#searchResult-text");
+// 顯示選取的區
 regionSearch.addEventListener("change", function(e){
     let count = 0;
     let str = "";
@@ -115,34 +130,22 @@ regionSearch.addEventListener("change", function(e){
     });
 });
 
+// 新增套票區
+addTicketBtn.addEventListener("click", addCard);
 
-const tickedName = document.querySelector("#ticketName");
-const ticketImgUrl = document.querySelector("#ticketImgUrl");
-const ticketRegion = document.querySelector("#ticketRegion");
-const ticketPrice = document.querySelector("#ticketPrice");
-const ticketNum = document.querySelector("#ticketNum");
-const ticketRate = document.querySelector("#ticketRate");
-const ticketDescription = document.querySelector("#ticketDescription");
-const addTicketBtn = document.querySelector(".addTicket-btn");
-
-addTicketBtn.addEventListener("click", function(e){
+function addCard(){
     let obj = {};
+    obj.id = Date.now();
     obj.name = tickedName.value;
     obj.imgUrl = ticketImgUrl.value;
     obj.area = ticketRegion.value;
-    obj.price = ticketPrice.value;
-    obj.group = ticketNum.value;
-    obj.rate = ticketRate.value;
+    obj.price = Number(ticketPrice.value);
+    obj.group = Number(ticketNum.value);
+    obj.rate = Number(ticketRate.value);
     obj.description = ticketDescription.value;
     data.push(obj);
     init();
     alert("新增套票成功");
-    tickedName.value = "";
-    ticketImgUrl.value = "";
-    ticketRegion.value = "";
-    ticketPrice.value = "";
-    ticketNum.value = "";
-    ticketRate.value = "";
-    ticketDescription.value = "";
+    form.reset();
     searchResultText.textContent = `本次搜尋共 ${data.length} 筆資料`;
-});
+};
