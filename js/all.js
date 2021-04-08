@@ -136,7 +136,7 @@ addTicketBtn.addEventListener("click", function(e){
     obj.description = ticketDescription.value;
     data.push(obj);
     init();
-    alert("新增成功");
+    alert("新增套票成功");
     tickedName.value = "";
     ticketImgUrl.value = "";
     ticketRegion.value = "";
