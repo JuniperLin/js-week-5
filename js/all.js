@@ -1,35 +1,3 @@
-let data = [
-    {
-    "id": 0,
-    "name": "肥宅心碎賞櫻3日",
-    "imgUrl": "https://images.unsplash.com/photo-1522383225653-ed111181a951?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1655&q=80",
-    "area": "高雄",
-    "description": "賞櫻花最佳去處。肥宅不得不去的超讚景點！",
-    "group": 87,
-    "price": 1400,
-    "rate": 10
-    },
-    {
-    "id": 1,
-    "name": "貓空纜車雙程票",
-    "imgUrl": "https://images.unsplash.com/photo-1501393152198-34b240415948?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1650&q=80",
-    "area": "台北",
-    "description": "乘坐以透明強化玻璃為地板的「貓纜之眼」水晶車廂，享受騰雲駕霧遨遊天際之感",
-    "group": 99,
-    "price": 240,
-    "rate": 2
-    },
-    {
-    "id": 2,
-    "name": "台中谷關溫泉會1日",
-    "imgUrl": "https://images.unsplash.com/photo-1535530992830-e25d07cfa780?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1650&q=80",
-    "area": "台中",
-    "description": "全館客房均提供谷關無色無味之優質碳酸原湯，並取用八仙山之山冷泉供蒞臨貴賓沐浴及飲水使用。",
-    "group": 20,
-    "price": 1765,
-    "rate": 7.5
-    }
-];
 // 套票區
 const list = document.querySelector(".ticketCard-area");
 // 查詢地點
@@ -48,91 +16,72 @@ const addTicketBtn = document.querySelector(".addTicket-btn");
 // 選取整個 form
 const form = document.querySelector(".addTicket-form");
 
-// 初始化畫面（顯示全部套票）
-function init(){
-    let str = "";
-    data.forEach(function(item){
-        str += `<li class="ticketCard">
-        <div class="ticketCard-img">
-            <a href="#">
-            <img src=${item.imgUrl} alt="">
-            </a>
-            <div class="ticketCard-region">${item.area}</div>
-            <div class="ticketCard-rank">${item.rate}</div>
-        </div>
-        <div class="ticketCard-content">
-            <div>
-            <h3>
-                <a href="#" class="ticketCard-name">${item.name}</a>
-            </h3>
-            <p class="ticketCard-description">
-                ${item.description}
-            </p>
-            </div>
-            <div class="ticketCard-info">
-            <p class="ticketCard-num">
-                <span><i class="fas fa-exclamation-circle"></i></span>
-                剩下最後 <span id="ticketCard-num"> ${item.group} </span> 組
-            </p>
-            <p class="ticketCard-price">
-                TWD <span id="ticketCard-price">${item.price}</span>
-            </p>
-            </div>
-        </div>
-    </li>`
-    });
-    list.innerHTML = str; // 顯示在畫面上
-}
-init(); // 跑第一次
+const defaultOption = document.querySelector(".default-selection")
 
-// 顯示選取的區
-regionSearch.addEventListener("change", function(e){
-    let count = 0;
+// 把 response 回來的資料整理出來為一個新資料
+let newData = [];
+
+// 用 axios 向網址的私服器發送一個 get 請求
+axios.get('https://raw.githubusercontent.com/hexschool/js-training/main/travelApi.json')
+.then(function(response){
+    newData = response.data.data;
+    renderData(); // 用寫好的 renderData() 把整理好的資料渲染在網頁上
+});
+
+// 渲染畫面的內容
+function renderData(location){ // 參數下 location 來去接 regionSearch 切換回傳的值
     let str = "";
-    data.forEach(function (item, index) {
-        if (regionSearch.value == "全部地區") {
-            init();
-            searchResultText.textContent = `本次搜尋共 ${index+1} 筆資料`;
-        } else if (regionSearch.value == item.area) {
-            let content = `<li class="ticketCard">
+    let cacheData;
+    cacheData = newData.filter(function(item){
+        if (location === item.area){
+            return item;
+        };
+        if (!location) {
+            return item;
+        };
+    });
+    cacheData.forEach(function(item){
+        str += 
+        `<li class="ticketCard">
             <div class="ticketCard-img">
                 <a href="#">
-                <img src=${item.imgUrl} alt="">
+                    <img src=${item.imgUrl} alt="">
                 </a>
                 <div class="ticketCard-region">${item.area}</div>
                 <div class="ticketCard-rank">${item.rate}</div>
             </div>
             <div class="ticketCard-content">
                 <div>
-                <h3>
-                    <a href="#" class="ticketCard-name">${item.name}</a>
-                </h3>
-                <p class="ticketCard-description">
-                    ${item.description}
-                </p>
+                    <h3>
+                        <a href="#" class="ticketCard-name">${item.name}</a>
+                    </h3>
+                    <p class="ticketCard-description">
+                        ${item.description}
+                    </p>
                 </div>
                 <div class="ticketCard-info">
-                <p class="ticketCard-num">
-                    <span><i class="fas fa-exclamation-circle"></i></span>
-                    剩下最後 <span id="ticketCard-num"> ${item.group} </span> 組
-                </p>
-                <p class="ticketCard-price">
-                    TWD <span id="ticketCard-price">${item.price}</span>
-                </p>
+                    <p class="ticketCard-num">
+                        <span><i class="fas fa-exclamation-circle"></i></span>
+                        剩下最後 <span id="ticketCard-num"> ${item.group} </span> 組
+                    </p>
+                    <p class="ticketCard-price">
+                        TWD <span id="ticketCard-price">${item.price}</span>
+                    </p>
                 </div>
             </div>
-            </li>`;
-            count+=1;
-            str += content;
-            list.innerHTML = str;
-            searchResultText.textContent = `本次搜尋共 ${count} 筆資料`;
-        };
+        </li>`
+        list.innerHTML = str; // 顯示在畫面上
     });
+    searchResultText.textContent = `本次共有 ${cacheData.length} 筆搜尋結果`;
+};
+
+// 篩選功能
+regionSearch.addEventListener("change", function(e){
+    renderData(regionSearch.value); // 帶入切換後回傳的值去跑 renderData 這個函式
 });
 
 // 新增套票區
 addTicketBtn.addEventListener("click", addCard);
-
 function addCard(){
     let obj = {};
     obj.id = Date.now();
@@ -143,9 +92,9 @@ function addCard(){
     obj.group = Number(ticketNum.value);
     obj.rate = Number(ticketRate.value);
     obj.description = ticketDescription.value;
-    data.push(obj);
-    init();
+    newData.push(obj);
+    renderData();
     alert("新增套票成功");
     form.reset();
-    searchResultText.textContent = `本次搜尋共 ${data.length} 筆資料`;
+    regionSearch.value = "";
 };
